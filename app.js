@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-	res.render("login");
+	res.render("login", { errMsg: "", username: "", password: "" });
 });
 
 app.get("/register", (req, res) => {
@@ -43,6 +43,32 @@ app.post("/register", (req, res) => {
 	newUser
 		.save()
 		.then(() => res.render("secrets"))
+		.catch((err) => console.log(err));
+});
+
+app.post("/login", (req, res) => {
+	const username = req.body.username;
+	const password = req.body.password;
+	User.findOne({ email: username })
+		.then((foundUser) => {
+			if (foundUser) {
+				if (foundUser.password === password) {
+					res.render("secrets");
+				} else {
+					res.render("login", {
+						errMsg: "Invalid Credentials",
+						username: username,
+						password: password,
+					});
+				}
+			} else {
+				res.render("login", {
+					errMsg: "Invalid Credentials",
+					username: username,
+					password: password,
+				});
+			}
+		})
 		.catch((err) => console.log(err));
 });
 
