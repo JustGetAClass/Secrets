@@ -23,8 +23,6 @@ const userSchema = new mongoose.Schema({
 
 const User = new mongoose.model("User", userSchema);
 
-
-
 app.get("/", (req, res) => {
 	res.render("home");
 });
@@ -38,8 +36,15 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    
-})
+	const newUser = new User({
+		email: req.body.username,
+		password: req.body.password,
+	});
+	newUser
+		.save()
+		.then(() => res.render("secrets"))
+		.catch((err) => console.log(err));
+});
 
 app.listen(PORT, () => {
 	console.log(`Server started at port ${PORT}`);
